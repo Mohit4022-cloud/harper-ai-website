@@ -1,4 +1,5 @@
 FROM nginx:alpine-slim
+ARG CACHEBUST=1
 
 WORKDIR /usr/share/nginx/html
 

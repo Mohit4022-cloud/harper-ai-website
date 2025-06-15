@@ -4,8 +4,13 @@ services:
     runtime: docker
     dockerfilePath: ./Dockerfile
     dockerContext: .
-    healthCheckPath: /health
+    healthCheckPath: /
     autoDeploy: true
+    buildFilter:
+      paths:
+        - /**
     envVars:
       - key: PORT
         value: 10000
+      - key: DOCKER_BUILDKIT
+        value: 1
