@@ -1,71 +1,90 @@
-# Multi-page marketing website for Harper AI
-# Updated: 2024-12-14
-FROM nginx:alpine
+# Harper AI Marketing Website
+# Version: 2.0 - Complete rebuild
+FROM nginx:1.25-alpine
 
-# Remove default nginx config
-RUN rm -rf /etc/nginx/conf.d/*
+# Install bash for scripting
+RUN apk add --no-cache bash
 
-# Create optimized nginx config
+# Remove all default nginx configurations
+RUN rm -rf /etc/nginx/conf.d/* && \
+    rm -rf /usr/share/nginx/html/*
+
+# Create new nginx configuration
 RUN echo 'server { \
-    listen 3000; \
-    listen [::]:3000; \
+    listen 8080; \
+    listen [::]:8080; \
     server_name _; \
     root /usr/share/nginx/html; \
     index index.html; \
     \
-    # Compression \
+    # Enable gzip compression \
     gzip on; \
-    gzip_types text/css application/javascript text/html; \
+    gzip_vary on; \
+    gzip_min_length 256; \
+    gzip_types text/plain text/css text/xml text/javascript application/x-javascript application/xml+rss application/javascript application/json; \
     \
-    # Cache static assets \
-    location ~* \.(css|js|jpg|jpeg|png|gif|ico|svg)$ { \
+    # Security headers \
+    add_header X-Frame-Options "SAMEORIGIN" always; \
+    add_header X-Content-Type-Options "nosniff" always; \
+    add_header X-XSS-Protection "1; mode=block" always; \
+    \
+    # Main location \
+    location / { \
+        try_files $uri $uri/ /index.html; \
+        add_header Cache-Control "no-cache, no-store, must-revalidate"; \
+    } \
+    \
+    # Static assets caching \
+    location ~* \.(css|js|jpg|jpeg|png|gif|ico|svg|woff|woff2|ttf|eot)$ { \
         expires 30d; \
         add_header Cache-Control "public, immutable"; \
     } \
     \
-    # Serve HTML files \
-    location / { \
-        try_files $uri $uri/ /index.html; \
-        expires -1; \
-        add_header Cache-Control "no-cache, no-store, must-revalidate"; \
-    } \
-    \
-    # Health check endpoint \
+    # Health check \
     location /health { \
         access_log off; \
-        return 200 "OK"; \
+        return 200 "healthy\n"; \
         add_header Content-Type text/plain; \
     } \
 }' > /etc/nginx/conf.d/default.conf
 
-# Copy all website files
+# Set working directory
 WORKDIR /usr/share/nginx/html
-COPY index.html .
-COPY features.html .
-COPY pricing.html .
-COPY for-sdrs.html .
-COPY for-managers.html .
-COPY enterprise.html .
-COPY small-business.html .
-COPY security.html .
-COPY styles.css .
 
-# Create startup script for PORT handling
-RUN echo '#!/bin/sh\n\
-# Replace port placeholder with actual PORT env variable\n\
-if [ -n "$PORT" ]; then\n\
-  echo "Configuring nginx to listen on port $PORT"\n\
-  sed -i "s/listen 3000/listen $PORT/g" /etc/nginx/conf.d/default.conf\n\
-  sed -i "s/listen \[::\]:3000/listen \[::\]:$PORT/g" /etc/nginx/conf.d/default.conf\n\
-fi\n\
-\n\
-# Start nginx\n\
-echo "Starting nginx..."\n\
-nginx -g "daemon off;"' > /startup.sh && \
-chmod +x /startup.sh
+# Copy all marketing website files
+COPY ./index.html ./
+COPY ./features.html ./
+COPY ./pricing.html ./
+COPY ./for-sdrs.html ./
+COPY ./for-managers.html ./
+COPY ./enterprise.html ./
+COPY ./small-business.html ./
+COPY ./security.html ./
+COPY ./styles.css ./
 
-# Expose port
-EXPOSE 3000
+# Create entrypoint script
+RUN echo '#!/bin/bash \
+set -e \
+\
+# Use PORT env variable if set, otherwise default to 8080 \
+PORT=${PORT:-8080} \
+echo "Configuring nginx to listen on port $PORT" \
+\
+# Replace port in nginx config \
+sed -i "s/listen 8080/listen $PORT/g" /etc/nginx/conf.d/default.conf \
+sed -i "s/listen \[::\]:8080/listen \[::\]:$PORT/g" /etc/nginx/conf.d/default.conf \
+\
+# Verify files exist \
+echo "Checking website files:" \
+ls -la /usr/share/nginx/html/ \
+\
+# Start nginx \
+echo "Starting nginx on port $PORT" \
+exec nginx -g "daemon off;"' > /entrypoint.sh && \
+chmod +x /entrypoint.sh
 
-# Use the startup script
-CMD ["/startup.sh"]
+# Default port (Render will override via PORT env)
+EXPOSE 8080
+
+# Use our custom entrypoint
+ENTRYPOINT ["/entrypoint.sh"]
