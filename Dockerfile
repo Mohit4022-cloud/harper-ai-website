@@ -1,3 +1,4 @@
+# Harper AI Website - Static Site
 # Use nginx alpine for lightweight static serving
 FROM nginx:alpine
 
