@@ -5,3 +5,6 @@ render.yaml
 Dockerfile.old
 .DS_Store
 *.log
+# Ensure harper-ai-website directory is NOT ignored
+!harper-ai-website/
+!harper-ai-website/**

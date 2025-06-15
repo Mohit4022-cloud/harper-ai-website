@@ -1,24 +1,31 @@
-FROM nginx:alpine-slim
-ARG CACHEBUST=1
+FROM nginx:alpine
 
-WORKDIR /usr/share/nginx/html
+# Remove default nginx config
+RUN rm -f /etc/nginx/conf.d/default.conf
 
-# Remove default files
-RUN rm -rf ./*
+# Create nginx config
+RUN echo 'server { \
+    listen 80; \
+    listen [::]:80; \
+    server_name _; \
+    root /usr/share/nginx/html; \
+    index index.html; \
+    location / { \
+        try_files $uri $uri/ /index.html; \
+    } \
+    location /health { \
+        access_log off; \
+        return 200 "OK"; \
+        add_header Content-Type text/plain; \
+    } \
+}' > /etc/nginx/conf.d/default.conf
 
-# Copy website files
-COPY index.html .
-COPY features.html .
-COPY pricing.html .
-COPY for-sdrs.html .
-COPY for-managers.html .
-COPY enterprise.html .
-COPY small-business.html .
-COPY security.html .
-COPY styles.css .
+# Copy the HTML file from subdirectory
+COPY harper-ai-website/harper-ai-website.html /usr/share/nginx/html/index.html
 
-# Configure nginx
-RUN echo 'server { listen 80; root /usr/share/nginx/html; index index.html; location / { try_files $uri $uri/ /index.html; } }' > /etc/nginx/conf.d/default.conf
+# Also copy any other marketing pages if they exist
+COPY *.html /usr/share/nginx/html/ || true
+COPY *.css /usr/share/nginx/html/ || true
 
 EXPOSE 80
 
