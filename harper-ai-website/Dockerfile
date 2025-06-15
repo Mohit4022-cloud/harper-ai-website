@@ -1,44 +1,39 @@
 FROM nginx:alpine
 
-# Remove default nginx config
-RUN rm -f /etc/nginx/conf.d/default.conf
+# Remove default nginx config and files
+RUN rm -rf /etc/nginx/conf.d/* && \
+    rm -rf /usr/share/nginx/html/*
 
-# Create nginx config with proper error handling
+# Create nginx config
 RUN echo 'server { \
     listen 80; \
-    listen [::]:80; \
     server_name _; \
     root /usr/share/nginx/html; \
     index index.html; \
+    \
     location / { \
         try_files $uri $uri/ /index.html; \
     } \
+    \
     location /health { \
         access_log off; \
-        return 200 "OK"; \
+        return 200 "healthy\n"; \
         add_header Content-Type text/plain; \
     } \
 }' > /etc/nginx/conf.d/default.conf
 
-# Debug: Show build context
-RUN echo "Nginx config created"
+# Set working directory
+WORKDIR /usr/share/nginx/html
 
-# Create the target directory
-RUN mkdir -p /usr/share/nginx/html
+# Copy the main HTML file from subdirectory
+COPY harper-ai-website/harper-ai-website.html ./index.html
 
-# Copy the HTML file from subdirectory with explicit path
-COPY ./harper-ai-website/harper-ai-website.html /usr/share/nginx/html/index.html
+# Copy all other HTML and CSS files from root
+COPY *.html ./
+COPY *.css ./
 
-# Copy other marketing pages if they exist (with explicit paths)
-COPY ./index.html /usr/share/nginx/html/home.html
-COPY ./features.html /usr/share/nginx/html/
-COPY ./pricing.html /usr/share/nginx/html/
-COPY ./for-sdrs.html /usr/share/nginx/html/
-COPY ./for-managers.html /usr/share/nginx/html/
-COPY ./enterprise.html /usr/share/nginx/html/
-COPY ./small-business.html /usr/share/nginx/html/
-COPY ./security.html /usr/share/nginx/html/
-COPY ./styles.css /usr/share/nginx/html/
+# Ensure permissions are correct
+RUN chmod -R 755 /usr/share/nginx/html
 
 EXPOSE 80
 

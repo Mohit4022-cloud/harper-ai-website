@@ -1,20 +1,32 @@
-# Git files
+# Version control
 .git
 .gitignore
 
 # Documentation
 README.md
 
-# Build files
+# CI/CD files
 render.yaml
-Dockerfile.old
-test-build.sh
-Dockerfile.debug
+.github
 
-# OS files
-.DS_Store
+# Development files
 *.log
+*.swp
+*.swo
+*~
+.DS_Store
 
-# Explicitly include harper-ai-website directory and its contents
+# Test files
+test-*.sh
+*.test
+*.spec
+
+# Temporary Dockerfiles
+Dockerfile.old
+Dockerfile.debug
+Dockerfile.backup
+
+# Explicitly ensure harper-ai-website directory is included
+# The ! prefix means "do not ignore"
 !harper-ai-website/
-!harper-ai-website/harper-ai-website.html
+!harper-ai-website/**
