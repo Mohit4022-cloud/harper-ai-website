@@ -1,4 +1,5 @@
 # Use nginx alpine for lightweight static serving
+# Force rebuild: 2024-12-14
 FROM nginx:alpine
 
 # Remove default nginx config
@@ -10,7 +11,7 @@ RUN echo 'server { \
     listen [::]:3000; \
     server_name _; \
     root /usr/share/nginx/html; \
-    index index.html harper-ai-website.html; \
+    index index.html; \
     location / { \
         try_files $uri $uri/ /index.html; \
     } \
