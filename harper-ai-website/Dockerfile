@@ -3,7 +3,7 @@ FROM nginx:alpine
 # Remove default nginx config
 RUN rm -f /etc/nginx/conf.d/default.conf
 
-# Create nginx config
+# Create nginx config with proper error handling
 RUN echo 'server { \
     listen 80; \
     listen [::]:80; \
@@ -20,12 +20,25 @@ RUN echo 'server { \
     } \
 }' > /etc/nginx/conf.d/default.conf
 
-# Copy the HTML file from subdirectory
-COPY harper-ai-website/harper-ai-website.html /usr/share/nginx/html/index.html
+# Debug: Show build context
+RUN echo "Nginx config created"
 
-# Also copy any other marketing pages if they exist
-COPY *.html /usr/share/nginx/html/ || true
-COPY *.css /usr/share/nginx/html/ || true
+# Create the target directory
+RUN mkdir -p /usr/share/nginx/html
+
+# Copy the HTML file from subdirectory with explicit path
+COPY ./harper-ai-website/harper-ai-website.html /usr/share/nginx/html/index.html
+
+# Copy other marketing pages if they exist (with explicit paths)
+COPY ./index.html /usr/share/nginx/html/home.html
+COPY ./features.html /usr/share/nginx/html/
+COPY ./pricing.html /usr/share/nginx/html/
+COPY ./for-sdrs.html /usr/share/nginx/html/
+COPY ./for-managers.html /usr/share/nginx/html/
+COPY ./enterprise.html /usr/share/nginx/html/
+COPY ./small-business.html /usr/share/nginx/html/
+COPY ./security.html /usr/share/nginx/html/
+COPY ./styles.css /usr/share/nginx/html/
 
 EXPOSE 80
 

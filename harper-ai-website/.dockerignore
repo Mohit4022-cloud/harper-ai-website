@@ -1,10 +1,20 @@
+# Git files
 .git
 .gitignore
+
+# Documentation
 README.md
+
+# Build files
 render.yaml
 Dockerfile.old
+test-build.sh
+Dockerfile.debug
+
+# OS files
 .DS_Store
 *.log
-# Ensure harper-ai-website directory is NOT ignored
+
+# Explicitly include harper-ai-website directory and its contents
 !harper-ai-website/
-!harper-ai-website/**
+!harper-ai-website/harper-ai-website.html
