@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: harper-ai-website
+    runtime: docker
+    repo: https://github.com/Mohit4022-cloud/harper-ai-website
+    branch: main
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: NODE_ENV
+        value: production

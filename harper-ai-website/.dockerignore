@@ -1,0 +1,31 @@
+# Version control
+.git
+.gitignore
+
+# Documentation  
+README.md
+
+# CI/CD
+.github
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Test scripts
+test-*.sh
+fix-*.sh
+*-test.sh
+
+# Backup files
+*.backup
+*.old
+*.orig
+
+# IMPORTANT: Do NOT ignore everything with *
+# IMPORTANT: Explicitly include our needed directory
+!harper-ai-website/
+!harper-ai-website/**/*
