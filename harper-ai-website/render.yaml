@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: harper-ai-marketing-site
+    runtime: docker
+    repo: https://github.com/Mohit4022-cloud/harper-ai-website
+    branch: main
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /
+    autoDeploy: false
+    buildCommand: docker build --no-cache -t harper-ai-marketing .
+    envVars:
+      - key: DOCKER_BUILDKIT
+        value: "0"
