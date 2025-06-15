@@ -16,9 +16,9 @@ RUN echo 'server { \
     } \
 }' > /etc/nginx/conf.d/default.conf
 
-# Copy the HTML file
-COPY harper-ai-website.html /usr/share/nginx/html/index.html
-COPY harper-ai-website.html /usr/share/nginx/html/harper-ai-website.html
+# Copy all HTML and CSS files
+COPY *.html /usr/share/nginx/html/
+COPY *.css /usr/share/nginx/html/
 
 # Create a startup script to handle PORT env variable
 RUN echo '#!/bin/sh\n\
