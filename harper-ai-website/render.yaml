@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: harper-ai-website
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /
+    envVars:
+      - key: PORT
+        value: 3000
