@@ -1,0 +1,52 @@
+# Version control
+.git
+.gitignore
+
+# Documentation
+README.md
+*.md
+
+# Development files
+.env
+.env.*
+*.log
+*.tmp
+*.temp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor directories
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Build artifacts
+node_modules/
+dist/
+build/
+*.zip
+*.tar.gz
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+
+# Render specific
+render.yaml
+render.yml
+
+# Test files
+test/
+tests/
+*.test.*
+*.spec.*
+
+# Backup files
+*.backup
+*.bak
+*.old
